@@ -1,9 +1,17 @@
 def imageName = 'proxypepe/demo'
+def registry = 'localhost:5000'
+
+def commitID() {
+    sh 'git rev-parse HEAD > .git/commitID'
+    def commitID = readFile('.git/commitID').trim()
+    sh 'rm .git/commitID'
+    commitID
+}
 
 node('master'){
   stage('Checkout') {
     git branch: 'main',
-      url: 'https://github.com/Proxypepe/test.git'
+      url: ''
   }
     // stage('Unit Tests'){
   //   def imageTest = docker.build("${imageName}-test", 
@@ -14,24 +22,32 @@ node('master'){
   //   // sh "docker run --rm -v $PWD/reports:/app/reports ${imageName}-test"
   //   // junit "$PWD/reports/*.xml"
   // }
-  def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+  def imageTest = docker.build("${imageName}-test", "-f Dockerfile.test .")
   stage('Pre-integration Tests'){
     parallel(
       'Quality Tests': {
-          imageTest.inside{
-            sh 'pylint .'
-        }
+          sh "docker run --rm ${imageName}-test pylint ."
       },
        'Unit Tests': {
-          imageTest.inside{
-            sh 'pytest'
-          }
+          sh "docker run --rm ${imageName}-test pytest"
         },
       'Security Tests': {
-        imageTest.inside(){
-          sh 'safety check -r main.py'
-        }
+        sh "docker run --rm ${imageName}-test safety check -r main.py"
       }
     )
+  }
+
+  stage('Build') {
+    docker.build("${imageName}", "-f Dockerfile .")
+  }
+
+  stage('Push') {
+    docker.withRegistry(registry, 'registry') {
+      docker.image(imageName).push(commitID())
+
+      if (env.BRANCH_NAME == 'develop') {
+          docker.image(imageName).push('develop')
+      }
+    }
   }
 }
