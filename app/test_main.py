@@ -1,7 +1,7 @@
 """Testing Some module"""
 import pytest
 
-from main import MovieJsonLoader
+from .main import MovieJsonLoader
 
 
 @pytest.fixture(name="movie_json_loader")
