@@ -10,8 +10,7 @@ def commitID() {
 
 node('master'){
   stage('Checkout') {
-    git branch: 'main',
-      url: ''
+    checkout scm
   }
     // stage('Unit Tests'){
   //   def imageTest = docker.build("${imageName}-test", 
