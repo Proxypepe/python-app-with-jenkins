@@ -2,10 +2,8 @@ def imageName = 'proxypepe/demo'
 
 node('master'){
   stage('Checkout') {
-    steps {
-      git branch: 'main',
-        url: 'git@github.com:Proxypepe/test.git'
-    }
+    git branch: 'main',
+      url: 'https://github.com/Proxypepe/test.git'
   }
     // stage('Unit Tests'){
   //   def imageTest = docker.build("${imageName}-test", 
