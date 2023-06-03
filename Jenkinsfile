@@ -3,9 +3,8 @@ def imageName = 'proxypepe/demo'
 node('master'){
   stage('Checkout') {
     steps {
-      git branch: 'develop',
-        credentialsId: 'github-ssh',
-        url: 'git@github.com:.git'
+      git branch: 'main',
+        url: 'git@github.com:Proxypepe/test.git'
     }
   }
     // stage('Unit Tests'){
