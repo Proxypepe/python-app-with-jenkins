@@ -41,7 +41,7 @@ node('master'){
   }
 
   stage('Push') {
-    docker.withRegistry(registry, 'registry') {
+    docker.withRegistry(registry) {
       docker.image(imageName).push(commitID())
 
       if (env.BRANCH_NAME == 'develop') {
