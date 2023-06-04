@@ -1,5 +1,5 @@
 def imageName = 'proxypepe/demo'
-def registry = 'localhost:5000'
+def registry = 'http://localhost:5000'
 
 def commitID() {
     sh 'git rev-parse HEAD > .git/commitID'
