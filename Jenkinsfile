@@ -40,12 +40,18 @@ node('master'){
     docker.build("${imageName}", "-f Dockerfile .")
   }
 
+
+  stage ('Image security test') {
+    sh "docker run "
+  }
+
   stage('Push') {
     docker.withRegistry(registry) {
+      // docker.image(imageName).push(env.BUILD_ID)
       docker.image(imageName).push(commitID())
 
-      if (env.BRANCH_NAME == 'develop') {
-          docker.image(imageName).push('develop')
+      if (env.BRANCH_NAME == 'main') {
+          docker.image(imageName).push('main')
       }
     }
   }
